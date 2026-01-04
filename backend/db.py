@@ -9,6 +9,7 @@ from sqlmodel import SQLModel, create_engine
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import NullPool
 from typing import AsyncGenerator
 import os
 from dotenv import load_dotenv
@@ -26,9 +27,15 @@ if not DATABASE_URL:
     )
 
 # Convert postgresql:// to postgresql+asyncpg:// for async support
-# Allow sqlite for testing purposes
+# Handle Neon and other PostgreSQL databases
 if DATABASE_URL.startswith("postgresql://"):
-    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
+    # Remove any query parameters (like ?sslmode=require) for asyncpg
+    # asyncpg handles SSL differently than psycopg2
+    base_url = DATABASE_URL.split("?")[0]  # Remove query params
+    DATABASE_URL = base_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+    # Add SSL mode for asyncpg
+    if "?" not in DATABASE_URL:
+        DATABASE_URL += "?ssl=require"
 elif DATABASE_URL.startswith("sqlite"):
     # Allow SQLite for testing
     pass
@@ -40,22 +47,28 @@ elif not DATABASE_URL.startswith("postgresql+asyncpg://"):
 
 # Create async engine
 # echo=True enables SQL query logging (disable in production)
-# SQLite doesn't support connection pooling, so we conditionally set pool options
+# SQLite doesn't support connection pooling, so we use NullPool
 if DATABASE_URL.startswith("sqlite"):
     engine: AsyncEngine = create_async_engine(
         DATABASE_URL,
         echo=False,  # Disable SQL logging for tests
         future=True,
-        connect_args={"check_same_thread": False}  # SQLite specific
+        connect_args={"check_same_thread": False},  # SQLite specific
+        poolclass=NullPool  # SQLite doesn't use connection pools
     )
 else:
+    # PostgreSQL (including Neon)
     engine: AsyncEngine = create_async_engine(
         DATABASE_URL,
-        echo=True,  # Log SQL queries for development
+        echo=False,  # Disable SQL logging for cleaner output
         future=True,
         pool_pre_ping=True,  # Verify connections before using them
-        pool_size=10,  # Connection pool size
-        max_overflow=20,  # Max overflow connections
+        pool_size=5,  # Connection pool size
+        max_overflow=10,  # Max overflow connections
+        connect_args={
+            "server_settings": {"application_name": "todo_app"},
+            "timeout": 30,
+        },
     )
 
 # Create async session maker
@@ -107,11 +120,25 @@ async def init_db() -> None:
     """
     from models import User, Task  # Import models to register them
 
-    async with engine.begin() as conn:
-        # Create all tables
-        await conn.run_sync(SQLModel.metadata.create_all)
+    # Log database type
+    if DATABASE_URL.startswith("postgresql+asyncpg://"):
+        db_type = "Neon PostgreSQL"
+        # Hide password in logs
+        display_url = DATABASE_URL.split("://")[1].split("@")[1]
+        print(f"[DB] Connecting to {db_type} ({display_url})")
+    elif DATABASE_URL.startswith("sqlite"):
+        print("[DB] Using SQLite (in-memory)")
+    else:
+        print(f"[DB] Connecting to {DATABASE_URL}")
 
-    print("✅ Database tables created successfully")
+    try:
+        async with engine.begin() as conn:
+            # Create all tables
+            await conn.run_sync(SQLModel.metadata.create_all)
+        print("[DB] Database tables initialized successfully")
+    except Exception as e:
+        print(f"[DB] Error initializing database: {str(e)}")
+        raise
 
 
 async def close_db() -> None:
@@ -122,7 +149,7 @@ async def close_db() -> None:
     This function should be called on application shutdown.
     """
     await engine.dispose()
-    print("✅ Database connections closed")
+    print("[DB] Database connections closed")
 
 
 # Database health check
@@ -139,10 +166,11 @@ async def check_db_health() -> bool:
             # Handle database connection error
     """
     try:
+        from sqlalchemy import text
         async with async_session_maker() as session:
             # Execute a simple query to verify connection
-            await session.execute("SELECT 1")
+            await session.execute(text("SELECT 1"))
             return True
     except Exception as e:
-        print(f"❌ Database health check failed: {e}")
+        print(f"[DB] Database health check failed: {e}")
         return False

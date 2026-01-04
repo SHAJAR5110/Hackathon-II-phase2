@@ -81,26 +81,35 @@ async def signup(
     }
     ```
     """
+    print(f"[AUTH_ROUTE] POST /auth/signup - Email: {signup_data.email}, Name: {signup_data.name}")
+
     try:
         # Call AuthService to create user
+        print(f"[AUTH_ROUTE] Calling AuthService.signup()")
         auth_response = await AuthService.signup(session, signup_data)
+        print(f"[AUTH_ROUTE] Signup successful, returning 201")
         return auth_response
 
     except ValueError as e:
+        error_msg = str(e)
+        print(f"[AUTH_ROUTE] ValueError caught: {error_msg}")
         # Email already registered
-        if "already registered" in str(e).lower():
+        if "already registered" in error_msg.lower():
+            print(f"[AUTH_ROUTE] Returning 409 Conflict")
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
-                detail=str(e)
+                detail=error_msg
             )
         # Other validation errors
+        print(f"[AUTH_ROUTE] Returning 400 Bad Request")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
+            detail=error_msg
         )
 
     except Exception as e:
         # Unexpected server error
+        print(f"[AUTH_ROUTE] Unexpected error: {type(e).__name__}: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal server error"
@@ -170,26 +179,35 @@ async def signin(
     }
     ```
     """
+    print(f"[AUTH_ROUTE] POST /auth/signin - Email: {signin_data.email}")
+
     try:
         # Call AuthService to authenticate user
+        print(f"[AUTH_ROUTE] Calling AuthService.signin()")
         auth_response = await AuthService.signin(session, signin_data)
+        print(f"[AUTH_ROUTE] Signin successful, returning 200")
         return auth_response
 
     except ValueError as e:
+        error_msg = str(e)
+        print(f"[AUTH_ROUTE] ValueError caught: {error_msg}")
         # Invalid credentials
-        if "invalid email or password" in str(e).lower():
+        if "invalid email or password" in error_msg.lower():
+            print(f"[AUTH_ROUTE] Returning 401 Unauthorized")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail=str(e)
+                detail=error_msg
             )
         # Other validation errors
+        print(f"[AUTH_ROUTE] Returning 400 Bad Request")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
+            detail=error_msg
         )
 
     except Exception as e:
         # Unexpected server error
+        print(f"[AUTH_ROUTE] Unexpected error: {type(e).__name__}: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal server error"

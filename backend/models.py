@@ -225,6 +225,10 @@ class SignupRequest(BaseModel):
         - Email format validated
         - Password strength enforced (min 8 chars, uppercase, lowercase, number)
         - Name required and trimmed
+
+    Note:
+        Passwords are automatically truncated to 72 bytes during hashing due to bcrypt limitation.
+        This is transparent to users and follows security best practices.
     """
     email: str = Field(..., min_length=3, max_length=255)
     password: str = Field(..., min_length=8, max_length=128)
@@ -274,6 +278,9 @@ class SigninRequest(BaseModel):
     Validation:
         - Email format validated
         - Password required
+
+    Note:
+        Passwords are automatically truncated to 72 bytes during verification due to bcrypt limitation.
     """
     email: str = Field(..., min_length=3, max_length=255)
     password: str = Field(..., min_length=1, max_length=128)

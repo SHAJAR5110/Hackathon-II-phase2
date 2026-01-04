@@ -140,9 +140,9 @@ async def startup_event():
     """
     from db import init_db
 
-    print("🚀 Starting Todo API...")
+    print("[STARTUP] Starting Todo API...")
     await init_db()
-    print("✅ Database initialized")
+    print("[STARTUP] Database initialized")
 
 
 @app.on_event("shutdown")
@@ -152,6 +152,6 @@ async def shutdown_event():
     """
     from db import close_db
 
-    print("🛑 Shutting down Todo API...")
+    print("[SHUTDOWN] Shutting down Todo API...")
     await close_db()
-    print("✅ Database connections closed")
+    print("[SHUTDOWN] Database connections closed")

@@ -232,6 +232,80 @@ export const api = {
       method: 'DELETE',
     });
   },
+
+  // ========================================================================
+  // Task-Specific Convenience Methods
+  // ========================================================================
+
+  /**
+   * Get all tasks for the authenticated user.
+   *
+   * @param filters - Optional filters (status, sort)
+   * @returns List of tasks
+   */
+  async getTasks(filters?: {
+    status?: 'all' | 'pending' | 'completed';
+    sort?: 'created' | 'title' | 'updated';
+  }): Promise<{ tasks: Task[] }> {
+    const params = new URLSearchParams();
+    if (filters?.status) params.append('status', filters.status);
+    if (filters?.sort) params.append('sort', filters.sort);
+
+    const query = params.toString();
+    const endpoint = query ? `/api/tasks?${query}` : '/api/tasks';
+
+    return api.get<{ tasks: Task[] }>(endpoint);
+  },
+
+  /**
+   * Get a single task by ID.
+   *
+   * @param id - Task ID
+   * @returns Task details
+   */
+  async getTask(id: number): Promise<Task> {
+    return api.get<Task>(`/api/tasks/${id}`);
+  },
+
+  /**
+   * Create a new task.
+   *
+   * @param data - Task creation data (title, description)
+   * @returns Created task
+   */
+  async createTask(data: TaskCreateRequest): Promise<Task> {
+    return api.post<Task>('/api/tasks', data);
+  },
+
+  /**
+   * Update an existing task.
+   *
+   * @param id - Task ID
+   * @param data - Task update data (title, description)
+   * @returns Updated task
+   */
+  async updateTask(id: number, data: TaskUpdateRequest): Promise<Task> {
+    return api.put<Task>(`/api/tasks/${id}`, data);
+  },
+
+  /**
+   * Delete a task.
+   *
+   * @param id - Task ID
+   */
+  async deleteTask(id: number): Promise<void> {
+    return api.delete<void>(`/api/tasks/${id}`);
+  },
+
+  /**
+   * Toggle task completion status.
+   *
+   * @param id - Task ID
+   * @returns Updated task
+   */
+  async toggleTaskComplete(id: number): Promise<Task> {
+    return api.patch<Task>(`/api/tasks/${id}/complete`, {});
+  },
 };
 
 // ============================================================================

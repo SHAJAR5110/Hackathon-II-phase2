@@ -61,12 +61,14 @@ export function getToken(): string | null {
 }
 
 /**
- * Remove JWT token from localStorage.
+ * Remove JWT token from localStorage and cookies.
  */
 export function clearToken(): void {
   if (typeof window !== 'undefined') {
     localStorage.removeItem('auth-token');
     localStorage.removeItem('user');
+    // Clear auth token cookie
+    document.cookie = 'auth-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
   }
 }
 
@@ -198,6 +200,17 @@ export async function signup(data: SignupData): Promise<{ user: User; token: str
   }
 
   const result = await response.json();
+
+  // Set auth token in cookie for middleware authentication
+  if (result.token) {
+    // Set cookie using document.cookie
+    const expiryDate = new Date();
+    expiryDate.setDate(expiryDate.getDate() + 7); // 7 days expiry
+    if (typeof window !== 'undefined') {
+      document.cookie = `auth-token=${result.token}; expires=${expiryDate.toUTCString()}; path=/`;
+    }
+  }
+
   return result;
 }
 
@@ -225,5 +238,16 @@ export async function signin(data: SigninData): Promise<{ user: User; token: str
   }
 
   const result = await response.json();
+
+  // Set auth token in cookie for middleware authentication
+  if (result.token) {
+    // Set cookie using document.cookie
+    const expiryDate = new Date();
+    expiryDate.setDate(expiryDate.getDate() + 7); // 7 days expiry
+    if (typeof window !== 'undefined') {
+      document.cookie = `auth-token=${result.token}; expires=${expiryDate.toUTCString()}; path=/`;
+    }
+  }
+
   return result;
 }

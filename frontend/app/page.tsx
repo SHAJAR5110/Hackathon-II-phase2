@@ -5,9 +5,10 @@ import { Task, TaskCreateRequest, TaskUpdateRequest, api } from '@/lib/api';
 import TaskForm from '@/components/TaskForm';
 import TaskList from '@/components/TaskList';
 import Header from '@/components/Header';
+import ProtectedRoute from '@/components/ProtectedRoute';
 import { AlertCircle } from 'lucide-react';
 
-export default function DashboardPage() {
+function DashboardContent() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -146,5 +147,13 @@ export default function DashboardPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <ProtectedRoute>
+      <DashboardContent />
+    </ProtectedRoute>
   );
 }

@@ -81,7 +81,7 @@ export default function SignupForm() {
       { score: 4, feedback: 'Strong', color: 'bg-green-500' },
     ];
 
-    return feedbacks[score];
+    return feedbacks[score] as PasswordStrength;
   }
 
   const passwordStrength = calculatePasswordStrength(formData.password);

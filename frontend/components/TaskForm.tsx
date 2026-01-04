@@ -86,9 +86,10 @@ export default function TaskForm({
         setDescription('');
         setErrors({});
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       setErrors({
-        form: error.message || 'Failed to save task. Please try again.',
+        form:
+          error instanceof Error ? error.message : 'Failed to save task. Please try again.',
       });
     }
   };

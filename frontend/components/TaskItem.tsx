@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Task, TaskUpdateRequest } from '@/lib/api';
-import { Pencil, Trash2, Check, X } from 'lucide-react';
+import { Pencil, Trash2, Check } from 'lucide-react';
 import TaskForm from './TaskForm';
 import DeleteConfirmModal from './DeleteConfirmModal';
 

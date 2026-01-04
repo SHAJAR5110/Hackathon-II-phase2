@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Task, TaskCreateRequest, TaskUpdateRequest, api } from '@/lib/api';
+import { Task, TaskCreateRequest, api } from '@/lib/api';
 import TaskForm from '@/components/TaskForm';
 import TaskList from '@/components/TaskList';
 import Header from '@/components/Header';
@@ -20,8 +20,12 @@ function DashboardContent() {
       setError(null);
       const data = await api.getTasks();
       setTasks(data.tasks);
-    } catch (err: any) {
-      setError(err.message || 'Failed to load tasks');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Failed to load tasks');
+      }
     } finally {
       setLoading(false);
     }
@@ -37,8 +41,10 @@ function DashboardContent() {
       const newTask = await api.createTask(data);
       setTasks((prev) => [newTask, ...prev]); // Add to beginning
       showSuccess('Task created successfully!');
-    } catch (err: any) {
-      throw new Error(err.message || 'Failed to create task');
+    } catch (err: unknown) {
+      throw new Error(
+        err instanceof Error ? err.message : 'Failed to create task'
+      );
     }
   };
 
@@ -51,18 +57,24 @@ function DashboardContent() {
       });
       setTasks((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
       showSuccess('Task updated successfully!');
-    } catch (err: any) {
-      throw new Error(err.message || 'Failed to update task');
+    } catch (err: unknown) {
+      throw new Error(
+        err instanceof Error ? err.message : 'Failed to update task'
+      );
     }
   };
 
   // Toggle task completion
-  const handleToggleComplete = async (taskId: number, completed: boolean) => {
+  const handleToggleComplete = async (taskId: number) => {
     try {
       const updated = await api.toggleTaskComplete(taskId);
       setTasks((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
-    } catch (err: any) {
-      setError(err.message || 'Failed to toggle task');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Failed to toggle task');
+      }
     }
   };
 
@@ -72,8 +84,12 @@ function DashboardContent() {
       await api.deleteTask(taskId);
       setTasks((prev) => prev.filter((t) => t.id !== taskId));
       showSuccess('Task deleted successfully!');
-    } catch (err: any) {
-      setError(err.message || 'Failed to delete task');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Failed to delete task');
+      }
     }
   };
 

@@ -1,0 +1,201 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.0, pytest-9.0.2, pluggy-1.6.0 -- C:\Users\HP\AppData\Local\Programs\Python\Python314\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\HP\Desktop\H\GIAIC\Phase 2\fullstack-app\backend
+configfile: pytest.ini
+plugins: anyio-4.11.0, asyncio-1.3.0, cov-7.0.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
+collecting ... collected 51 items
+
+tests/test_auth.py::test_signup_success FAILED                           [  1%]
+tests/test_auth.py::test_signup_email_already_exists FAILED              [  3%]
+tests/test_auth.py::test_signup_invalid_email_format PASSED              [  5%]
+tests/test_auth.py::test_signup_weak_password_too_short PASSED           [  7%]
+tests/test_auth.py::test_signup_weak_password_no_uppercase PASSED        [  9%]
+tests/test_auth.py::test_signup_weak_password_no_lowercase PASSED        [ 11%]
+tests/test_auth.py::test_signup_weak_password_no_number PASSED           [ 13%]
+tests/test_auth.py::test_signup_empty_name PASSED                        [ 15%]
+tests/test_auth.py::test_signup_missing_fields PASSED                    [ 17%]
+tests/test_auth.py::test_signin_success FAILED                           [ 19%]
+tests/test_auth.py::test_signin_invalid_email PASSED                     [ 21%]
+tests/test_auth.py::test_signin_invalid_password PASSED                  [ 23%]
+tests/test_auth.py::test_signin_invalid_email_format PASSED              [ 25%]
+tests/test_auth.py::test_signin_missing_fields PASSED                    [ 27%]
+tests/test_auth.py::test_logout_success PASSED                           [ 29%]
+tests/test_auth.py::test_jwt_token_contains_correct_claims FAILED        [ 31%]
+tests/test_tasks.py::test_create_task_success PASSED                     [ 33%]
+tests/test_tasks.py::test_create_task_without_description PASSED         [ 35%]
+tests/test_tasks.py::test_create_task_missing_title PASSED               [ 37%]
+tests/test_tasks.py::test_create_task_empty_title PASSED                 [ 39%]
+tests/test_tasks.py::test_create_task_title_too_long PASSED              [ 41%]
+tests/test_tasks.py::test_create_task_description_too_long PASSED        [ 43%]
+tests/test_tasks.py::test_create_task_unauthorized PASSED                [ 45%]
+tests/test_tasks.py::test_create_task_invalid_token PASSED               [ 47%]
+tests/test_tasks.py::test_list_tasks_empty PASSED                        [ 49%]
+tests/test_tasks.py::test_list_tasks_with_data PASSED                    [ 50%]
+tests/test_tasks.py::test_list_tasks_user_isolation PASSED               [ 52%]
+tests/test_tasks.py::test_list_tasks_sorted_by_created_at_desc PASSED    [ 54%]
+tests/test_tasks.py::test_list_tasks_unauthorized PASSED                 [ 56%]
+tests/test_tasks.py::test_get_task_success PASSED                        [ 58%]
+tests/test_tasks.py::test_get_task_not_found PASSED                      [ 60%]
+tests/test_tasks.py::test_get_task_permission_denied PASSED              [ 62%]
+tests/test_tasks.py::test_get_task_unauthorized PASSED                   [ 64%]
+tests/test_tasks.py::test_update_task_success PASSED                     [ 66%]
+tests/test_tasks.py::test_update_task_title_only PASSED                  [ 68%]
+tests/test_tasks.py::test_update_task_description_only PASSED            [ 70%]
+tests/test_tasks.py::test_update_task_invalid_title PASSED               [ 72%]
+tests/test_tasks.py::test_update_task_not_found PASSED                   [ 74%]
+tests/test_tasks.py::test_update_task_permission_denied PASSED           [ 76%]
+tests/test_tasks.py::test_update_task_unauthorized PASSED                [ 78%]
+tests/test_tasks.py::test_delete_task_success PASSED                     [ 80%]
+tests/test_tasks.py::test_delete_task_not_found PASSED                   [ 82%]
+tests/test_tasks.py::test_delete_task_permission_denied PASSED           [ 84%]
+tests/test_tasks.py::test_delete_task_unauthorized PASSED                [ 86%]
+tests/test_tasks.py::test_toggle_complete_pending_to_completed PASSED    [ 88%]
+tests/test_tasks.py::test_toggle_complete_completed_to_pending PASSED    [ 90%]
+tests/test_tasks.py::test_toggle_complete_not_found PASSED               [ 92%]
+tests/test_tasks.py::test_toggle_complete_permission_denied PASSED       [ 94%]
+tests/test_tasks.py::test_toggle_complete_unauthorized PASSED            [ 96%]
+tests/test_tasks.py::test_full_task_lifecycle PASSED                     [ 98%]
+tests/test_tasks.py::test_multiple_users_isolation PASSED                [100%]
+
+================================== FAILURES ===================================
+_____________________________ test_signup_success _____________________________
+tests\test_auth.py:85: in test_signup_success
+    assert response.status_code == 201
+E   assert 500 == 201
+E    +  where 500 = <Response [500 Internal Server Error]>.status_code
+---------------------------- Captured stdout setup ----------------------------
+\U0001f680 Starting Todo API...\n\u2705 Database tables created successfully\n\u2705 Database initialized
+-------------------------- Captured stdout teardown ---------------------------
+\U0001f6d1 Shutting down Todo API...\n\u2705 Database connections closed\n\u2705 Database connections closed
+______________________ test_signup_email_already_exists _______________________
+tests\test_auth.py:132: in test_signup_email_already_exists
+    assert response.status_code == 409
+E   assert 500 == 409
+E    +  where 500 = <Response [500 Internal Server Error]>.status_code
+---------------------------- Captured stdout setup ----------------------------
+\U0001f680 Starting Todo API...\n\u2705 Database tables created successfully\n\u2705 Database initialized
+-------------------------- Captured stdout teardown ---------------------------
+\U0001f6d1 Shutting down Todo API...\n\u2705 Database connections closed\n\u2705 Database connections closed
+_____________________________ test_signin_success _____________________________
+tests\test_auth.py:275: in test_signin_success
+    assert signup_response.status_code == 201
+E   assert 500 == 201
+E    +  where 500 = <Response [500 Internal Server Error]>.status_code
+---------------------------- Captured stdout setup ----------------------------
+\U0001f680 Starting Todo API...\n\u2705 Database tables created successfully\n\u2705 Database initialized
+-------------------------- Captured stdout teardown ---------------------------
+\U0001f6d1 Shutting down Todo API...\n\u2705 Database connections closed\n\u2705 Database connections closed
+___________________ test_jwt_token_contains_correct_claims ____________________
+tests\test_auth.py:415: in test_jwt_token_contains_correct_claims
+    token = response.json()["token"]
+            ^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'token'
+---------------------------- Captured stdout setup ----------------------------
+\U0001f680 Starting Todo API...\n\u2705 Database tables created successfully\n\u2705 Database initialized
+-------------------------- Captured stdout teardown ---------------------------
+\U0001f6d1 Shutting down Todo API...\n\u2705 Database connections closed\n\u2705 Database connections closed
+============================== warnings summary ===============================
+models.py:163
+  C:\Users\HP\Desktop\H\GIAIC\Phase 2\fullstack-app\backend\models.py:163: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    class TaskResponse(BaseModel):
+
+models.py:190
+  C:\Users\HP\Desktop\H\GIAIC\Phase 2\fullstack-app\backend\models.py:190: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    class UserResponse(BaseModel):
+
+main.py:135
+  C:\Users\HP\Desktop\H\GIAIC\Phase 2\fullstack-app\backend\main.py:135: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+..\..\..\..\..\..\AppData\Local\Programs\Python\Python314\Lib\site-packages\fastapi\applications.py:4576
+..\..\..\..\..\..\AppData\Local\Programs\Python\Python314\Lib\site-packages\fastapi\applications.py:4576
+  C:\Users\HP\AppData\Local\Programs\Python\Python314\Lib\site-packages\fastapi\applications.py:4576: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    return self.router.on_event(event_type)
+
+main.py:148
+  C:\Users\HP\Desktop\H\GIAIC\Phase 2\fullstack-app\backend\main.py:148: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("shutdown")
+
+tests/test_auth.py::test_signup_success
+tests/test_auth.py::test_signup_email_already_exists
+tests/test_auth.py::test_signup_email_already_exists
+tests/test_auth.py::test_signin_success
+tests/test_auth.py::test_signin_invalid_email
+tests/test_auth.py::test_signin_invalid_password
+tests/test_auth.py::test_signin_invalid_password
+tests/test_auth.py::test_jwt_token_contains_correct_claims
+  C:\\Users\\HP\\Desktop\\H\\GIAIC\\Phase 2\\fullstack-app\\backend\\services\\auth_service.py:128: DeprecationWarning: \n          \U0001f6a8 You probably want to use `session.exec()` instead of `session.execute()`.\n  \n          This is the original SQLAlchemy `session.execute()` method that returns objects\n          of type `Row`, and that you have to call `scalars()` to get the model objects.\n  \n          For example:\n  \n          ```Python\n          heroes = await session.execute(select(Hero)).scalars().all()\n          ```\n  \n          instead you could use `exec()`:\n  \n          ```Python\n          heroes = await session.exec(select(Hero)).all()\n          ```\n          \n    result = await session.execute(statement)
+
+tests/test_tasks.py: 27 warnings
+  C:\Users\HP\Desktop\H\GIAIC\Phase 2\fullstack-app\backend\routes\tasks.py:123: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    created_at=datetime.utcnow(),
+
+tests/test_tasks.py: 27 warnings
+  C:\Users\HP\Desktop\H\GIAIC\Phase 2\fullstack-app\backend\routes\tasks.py:124: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    updated_at=datetime.utcnow()
+
+tests/test_tasks.py::test_list_tasks_empty
+tests/test_tasks.py::test_list_tasks_with_data
+tests/test_tasks.py::test_list_tasks_user_isolation
+tests/test_tasks.py::test_list_tasks_user_isolation
+tests/test_tasks.py::test_list_tasks_sorted_by_created_at_desc
+tests/test_tasks.py::test_full_task_lifecycle
+tests/test_tasks.py::test_multiple_users_isolation
+tests/test_tasks.py::test_multiple_users_isolation
+  C:\\Users\\HP\\Desktop\\H\\GIAIC\\Phase 2\\fullstack-app\\backend\\routes\\tasks.py:75: DeprecationWarning: \n          \U0001f6a8 You probably want to use `session.exec()` instead of `session.execute()`.\n  \n          This is the original SQLAlchemy `session.execute()` method that returns objects\n          of type `Row`, and that you have to call `scalars()` to get the model objects.\n  \n          For example:\n  \n          ```Python\n          heroes = await session.execute(select(Hero)).scalars().all()\n          ```\n  \n          instead you could use `exec()`:\n  \n          ```Python\n          heroes = await session.exec(select(Hero)).all()\n          ```\n          \n    result = await session.execute(statement)
+
+tests/test_tasks.py::test_update_task_success
+tests/test_tasks.py::test_update_task_title_only
+tests/test_tasks.py::test_update_task_description_only
+tests/test_tasks.py::test_full_task_lifecycle
+  C:\Users\HP\Desktop\H\GIAIC\Phase 2\fullstack-app\backend\routes\tasks.py:246: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    task.updated_at = datetime.utcnow()
+
+tests/test_tasks.py::test_toggle_complete_pending_to_completed
+tests/test_tasks.py::test_toggle_complete_completed_to_pending
+tests/test_tasks.py::test_toggle_complete_completed_to_pending
+tests/test_tasks.py::test_full_task_lifecycle
+  C:\Users\HP\Desktop\H\GIAIC\Phase 2\fullstack-app\backend\routes\tasks.py:363: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    task.updated_at = datetime.utcnow()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=============================== tests coverage ================================
+_______________ coverage: platform win32, python 3.14.0-final-0 _______________
+
+Name                       Stmts   Miss  Cover   Missing
+--------------------------------------------------------
+db.py                         46     20    57%   23, 31, 35-36, 52, 87-95, 141-148
+main.py                       49      4    92%   88-90, 106, 118
+middleware\auth.py            40     14    65%   23, 73, 82, 100, 113-115, 145-148, 174, 199-207
+models.py                    106      6    94%   118, 146, 148, 155, 248, 262
+routes\auth.py                31      8    74%   87, 91-97, 176, 186-193
+routes\tasks.py               78      5    94%   61, 63, 68, 70, 234
+services\auth_service.py      57     18    68%   32, 79, 103-113, 165, 171-198, 242-252
+tests\test_auth.py           122     29    76%   86-104, 133, 278-300, 418-428
+--------------------------------------------------------
+TOTAL                        790    104    87%
+
+5 files skipped due to complete coverage.
+=========================== short test summary info ===========================
+FAILED tests/test_auth.py::test_signup_success - assert 500 == 201
+FAILED tests/test_auth.py::test_signup_email_already_exists - assert 500 == 409
+FAILED tests/test_auth.py::test_signin_success - assert 500 == 201
+FAILED tests/test_auth.py::test_jwt_token_contains_correct_claims - KeyError:...
+================== 4 failed, 47 passed, 84 warnings in 6.95s ==================

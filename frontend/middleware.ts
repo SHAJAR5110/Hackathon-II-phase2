@@ -11,47 +11,17 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  try {
-    // Get token from cookie
-    const token = request.cookies.get('auth-token')?.value;
-    const { pathname } = request.nextUrl;
+  const { pathname } = request.nextUrl;
+  const token = request.cookies.get('auth-token')?.value;
 
-    // Public routes that don't require authentication
-    const publicRoutes = ['/auth/signin', '/auth/signup', '/'];
-    const isPublicRoute = publicRoutes.includes(pathname);
-
-    // If accessing a protected route without a token, redirect to signin
-    if (!isPublicRoute && !token) {
-      return NextResponse.redirect(new URL('/auth/signin', request.url));
-    }
-
-    // If user is on root path without auth, redirect to signin
-    if (pathname === '/' && !token) {
-      return NextResponse.redirect(new URL('/auth/signin', request.url));
-    }
-
-    // If already authenticated and trying to access auth pages, redirect to dashboard
-    if ((pathname === '/auth/signin' || pathname === '/auth/signup') && token) {
-      return NextResponse.redirect(new URL('/', request.url));
-    }
-
-    return NextResponse.next();
-  } catch (error) {
-    // Log error and allow request to proceed
-    console.error('Middleware error:', error);
-    return NextResponse.next();
+  // Redirect unauthenticated users from root to signin
+  if (pathname === '/' && !token) {
+    return NextResponse.redirect(new URL('/auth/signin', request.url));
   }
+
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
-  ],
+  matcher: ['/', '/((?!api|_next|static|favicon.ico).*)'],
 };

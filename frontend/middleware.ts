@@ -11,31 +11,36 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  // Get token from cookie
-  const token = request.cookies.get('auth-token')?.value;
+  try {
+    // Get token from cookie
+    const token = request.cookies.get('auth-token')?.value;
+    const { pathname } = request.nextUrl;
 
-  const { pathname } = request.nextUrl;
+    // Public routes that don't require authentication
+    const publicRoutes = ['/auth/signin', '/auth/signup', '/'];
+    const isPublicRoute = publicRoutes.includes(pathname);
 
-  // Public routes that don't require authentication
-  const publicRoutes = ['/auth/signin', '/auth/signup', '/'];
-  const isPublicRoute = publicRoutes.includes(pathname);
+    // If accessing a protected route without a token, redirect to signin
+    if (!isPublicRoute && !token) {
+      return NextResponse.redirect(new URL('/auth/signin', request.url));
+    }
 
-  // If accessing a protected route without a token, redirect to signin
-  if (!isPublicRoute && !token) {
-    return NextResponse.redirect(new URL('/auth/signin', request.url));
+    // If user is on root path without auth, redirect to signin
+    if (pathname === '/' && !token) {
+      return NextResponse.redirect(new URL('/auth/signin', request.url));
+    }
+
+    // If already authenticated and trying to access auth pages, redirect to dashboard
+    if ((pathname === '/auth/signin' || pathname === '/auth/signup') && token) {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
+
+    return NextResponse.next();
+  } catch (error) {
+    // Log error and allow request to proceed
+    console.error('Middleware error:', error);
+    return NextResponse.next();
   }
-
-  // If user is on root path without auth, redirect to signin
-  if (pathname === '/' && !token) {
-    return NextResponse.redirect(new URL('/auth/signin', request.url));
-  }
-
-  // If already authenticated and trying to access auth pages, redirect to dashboard
-  if ((pathname === '/auth/signin' || pathname === '/auth/signup') && token) {
-    return NextResponse.redirect(new URL('/', request.url));
-  }
-
-  return NextResponse.next();
 }
 
 export const config = {

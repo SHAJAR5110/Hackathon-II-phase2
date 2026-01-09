@@ -2,24 +2,25 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Menu, X, LogOut, User } from 'lucide-react';
+import { useAuth } from '@/lib/use-auth';
 
-interface HeaderProps {
-  isAuthenticated?: boolean;
-  userName?: string;
-}
-
-export default function Header({ isAuthenticated = false, userName }: HeaderProps) {
+export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const { user, isAuthenticated, logout } = useAuth();
+  const router = useRouter();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleProfile = () => setIsProfileOpen(!isProfileOpen);
 
   const handleLogout = async () => {
     try {
-      await fetch('/api/auth/logout', { method: 'POST' });
-      window.location.href = '/';
+      await logout();
+      router.push('/');
+      setIsMenuOpen(false);
+      setIsProfileOpen(false);
     } catch (error) {
       console.error('Logout failed:', error);
     }
@@ -62,7 +63,7 @@ export default function Header({ isAuthenticated = false, userName }: HeaderProp
                   aria-haspopup="true"
                 >
                   <User className="w-5 h-5" />
-                  <span className="text-sm font-medium">{userName || 'User'}</span>
+                  <span className="text-sm font-medium">{user?.name || 'User'}</span>
                 </button>
 
                 {/* Profile Dropdown */}

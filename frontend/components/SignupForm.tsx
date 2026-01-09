@@ -1,17 +1,9 @@
-/**
- * Signup Form Component
- * Phase II - Todo Full-Stack Web Application
- *
- * User signup form with email, password, and name inputs.
- * Includes client-side validation, password strength indicator, and error handling.
- */
-
 'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { signup, saveToken, saveUser, type SignupData } from '@/lib/auth';
+import { useAuth } from '@/lib/use-auth';
 
 interface FormErrors {
   email?: string;
@@ -28,9 +20,10 @@ interface PasswordStrength {
 
 export default function SignupForm() {
   const router = useRouter();
+  const { signup } = useAuth();
 
   // Form state
-  const [formData, setFormData] = useState<SignupData & { confirmPassword: string }>({
+  const [formData, setFormData] = useState({
     email: '',
     password: '',
     confirmPassword: '',
@@ -152,19 +145,14 @@ export default function SignupForm() {
     setIsLoading(true);
 
     try {
-      // Call signup API
-      const response = await signup({
-        email: formData.email,
-        password: formData.password,
-        name: formData.name,
-      });
+      // Call signup through auth context
+      await signup(formData.email, formData.password, formData.name);
 
-      // Save token and user data
-      saveToken(response.token);
-      saveUser(response.user);
+      // Store success message in sessionStorage to display on signin page
+      sessionStorage.setItem('signupSuccess', 'Account created successfully! Please sign in.');
 
-      // Redirect to dashboard
-      router.push('/');
+      // Redirect to signin page
+      router.push('/auth/signin');
     } catch (error) {
       // Display server error
       if (error instanceof Error) {

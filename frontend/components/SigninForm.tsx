@@ -1,17 +1,9 @@
-/**
- * Signin Form Component
- * Phase II - Todo Full-Stack Web Application
- *
- * User signin form with email and password inputs.
- * Includes client-side validation and error handling.
- */
-
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { signin, saveToken, saveUser, type SigninData } from '@/lib/auth';
+import { useAuth } from '@/lib/use-auth';
 
 interface FormErrors {
   email?: string;
@@ -20,9 +12,10 @@ interface FormErrors {
 
 export default function SigninForm() {
   const router = useRouter();
+  const { login } = useAuth();
 
   // Form state
-  const [formData, setFormData] = useState<SigninData>({
+  const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
@@ -31,7 +24,17 @@ export default function SigninForm() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [rememberMe, setRememberMe] = useState(false);
+
+  // Check for signup success message
+  useEffect(() => {
+    const message = sessionStorage.getItem('signupSuccess');
+    if (message) {
+      setSuccessMessage(message);
+      sessionStorage.removeItem('signupSuccess');
+    }
+  }, []);
 
   /**
    * Validate form inputs.
@@ -71,24 +74,16 @@ export default function SigninForm() {
     setIsLoading(true);
 
     try {
-      // Call signin API
-      const response = await signin({
-        email: formData.email,
-        password: formData.password,
-      });
+      // Call login through auth context
+      await login(formData.email, formData.password);
 
-      // Save token and user data
-      saveToken(response.token);
-      saveUser(response.user);
-
-      // TODO: Implement remember me functionality in Phase III
+      // Store remember me preference if checked
       if (rememberMe) {
-        // Store remember me preference
         localStorage.setItem('rememberMe', 'true');
       }
 
       // Redirect to dashboard
-      router.push('/');
+      router.push('/dashboard');
     } catch (error) {
       // Display server error
       if (error instanceof Error) {
@@ -104,16 +99,23 @@ export default function SigninForm() {
   /**
    * Handle input change.
    */
-  function handleChange(field: keyof SigninData, value: string) {
+  function handleChange(field: 'email' | 'password', value: string) {
     setFormData((prev) => ({ ...prev, [field]: value }));
     // Clear error when user starts typing
-    if (errors[field as keyof FormErrors]) {
+    if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Success Message */}
+      {successMessage && (
+        <div className="p-4 text-sm text-green-800 bg-green-100 rounded-md border border-green-200">
+          {successMessage}
+        </div>
+      )}
+
       {/* Server Error */}
       {serverError && (
         <div className="p-4 text-sm text-red-800 bg-red-100 rounded-md border border-red-200">

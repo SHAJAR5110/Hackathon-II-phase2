@@ -40,7 +40,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       {/* Header */}
-      <Header isAuthenticated={false} />
+      <Header />
 
       {/* Hero Section */}
       <section className="flex-1 bg-gradient-to-br from-blue-50 via-white to-blue-50 px-4 sm:px-6 lg:px-8 py-20 sm:py-32">

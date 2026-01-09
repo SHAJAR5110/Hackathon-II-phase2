@@ -80,9 +80,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // Store token in localStorage
       localStorage.setItem('auth-token', token);
 
-      // Set user data
+      // Set and save user data
       if (data.user) {
         setUser(data.user);
+        localStorage.setItem('user', JSON.stringify(data.user));
       }
     } catch (error) {
       localStorage.removeItem('auth-token');
@@ -105,6 +106,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.error('Logout error:', error);
     } finally {
       localStorage.removeItem('auth-token');
+      localStorage.removeItem('user');
       setUser(null);
     }
   }, []);

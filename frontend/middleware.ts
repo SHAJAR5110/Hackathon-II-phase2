@@ -1,76 +1,80 @@
 /**
- * Next.js Middleware
+ * Next.js Middleware - Vercel Edge Compatible
  * Handles authentication checks and route protection
- * Vercel-compatible - uses next/middleware
+ * Designed for Vercel deployment with proper error handling
  */
 
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-/**
- * Protected routes that require authentication
- * Users without valid JWT tokens will be redirected to signin
- */
-const protectedRoutes = ['/dashboard'];
+// Protected routes that require authentication
+const PROTECTED_ROUTES = ['/dashboard'];
+
+// Auth routes (don't require authentication)
+const AUTH_ROUTES = ['/auth/signin', '/auth/signup'];
 
 /**
- * Middleware function to check authentication and handle route protection
- * Runs on every request to the application
+ * Middleware function - runs on every request
+ * Validates authentication and protects routes
  */
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  try {
+    const pathname = request.nextUrl.pathname;
 
-  // Check if the current route is protected
-  const isProtectedRoute = protectedRoutes.some(route =>
-    pathname.startsWith(route)
-  );
+    // Skip middleware for Next.js internal routes and static assets
+    if (
+      pathname.startsWith('/_next') ||
+      pathname.startsWith('/api') ||
+      pathname.startsWith('/.well-known') ||
+      /\.(png|jpg|jpeg|gif|icon|svg|webp|ico)$/i.test(pathname)
+    ) {
+      return NextResponse.next();
+    }
 
-  // Skip middleware for static files, API routes, and next internals
-  if (
-    pathname.startsWith('/_next') ||
-    pathname.startsWith('/api') ||
-    pathname.startsWith('/public') ||
-    pathname.match(/\.(png|jpg|jpeg|gif|ico|svg|webp)$/i)
-  ) {
+    // Check if route is protected
+    const isProtectedRoute = PROTECTED_ROUTES.some(route =>
+      pathname.startsWith(route)
+    );
+
+    // Safely get auth token from cookies
+    let authToken: string | undefined;
+    try {
+      authToken = request.cookies.get('auth-token')?.value;
+    } catch (error) {
+      // If cookie reading fails, treat as no token
+      authToken = undefined;
+    }
+
+    // Handle protected routes - redirect to signin if no token
+    if (isProtectedRoute && !authToken) {
+      const signInUrl = new URL('/auth/signin', request.url);
+      signInUrl.searchParams.set('redirect', pathname);
+      return NextResponse.redirect(signInUrl);
+    }
+
+    // Handle auth pages - redirect to dashboard if already logged in
+    const isAuthRoute = AUTH_ROUTES.some(route => pathname === route);
+    if (isAuthRoute && authToken) {
+      return NextResponse.redirect(new URL('/dashboard', request.url));
+    }
+
+    // Allow request to proceed
+    return NextResponse.next();
+  } catch (error) {
+    // On any unexpected error, allow the request to proceed
+    // This prevents the middleware from blocking the entire app
+    console.error('[Middleware Error]', error);
     return NextResponse.next();
   }
-
-  // Get the authentication token from localStorage
-  // Note: In middleware, we check cookies instead since localStorage is browser-only
-  const token = request.cookies.get('auth-token')?.value;
-
-  // If route is protected and no token exists, redirect to signin
-  if (isProtectedRoute && !token) {
-    const signInUrl = new URL('/auth/signin', request.url);
-    // Add redirect parameter so signin page can redirect back after login
-    signInUrl.searchParams.set('redirect', pathname);
-    return NextResponse.redirect(signInUrl);
-  }
-
-  // If user is on signin/signup page and has a valid token, redirect to dashboard
-  if ((pathname === '/auth/signin' || pathname === '/auth/signup') && token) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
-  }
-
-  // Allow the request to proceed
-  return NextResponse.next();
 }
 
-/**
- * Matcher configuration
- * Specifies which routes this middleware should run on
- * Excludes Next.js internals, static files, and API routes
- */
+// Matcher configuration for Vercel edge
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public folder
-     */
-    '/((?!api|_next/static|_next/image|favicon.ico|public).*)',
+    // Run middleware on all routes except:
+    // - _next (Next.js internals)
+    // - api (API routes)
+    // - favicon.ico (static file)
+    '/((?!_next|api|favicon.ico).*)',
   ],
 };

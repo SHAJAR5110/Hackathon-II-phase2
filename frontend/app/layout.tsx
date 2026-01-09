@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   title: 'Todo App - Phase II',
   description: 'Full-stack todo application with Next.js and FastAPI',
   icons: {
-    icon: '/favicon.ico',
+    icon: '/favicon.svg',
   },
 };
 

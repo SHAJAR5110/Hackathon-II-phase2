@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useCallback, useEffect, useState, ReactNode } from 'react';
+import { setAuthCookie, clearAuthCookie } from '@/lib/auth-cookies';
 
 // Get API base URL from environment or use localhost default
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -80,8 +81,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const data = await response.json();
       const token = data.access_token || data.token;
 
-      // Store token in localStorage
+      // Store token in both localStorage and cookie
+      // localStorage: for client-side persistence
+      // cookie: for middleware authentication checks (Vercel compatibility)
       localStorage.setItem('auth-token', token);
+      setAuthCookie(token);
 
       // Set and save user data
       if (data.user) {
@@ -89,7 +93,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
         localStorage.setItem('user', JSON.stringify(data.user));
       }
     } catch (error) {
+      // Clear both localStorage and cookie on error
       localStorage.removeItem('auth-token');
+      clearAuthCookie();
       throw error;
     }
   }, []);
@@ -108,8 +114,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
+      // Clear both localStorage and cookie
       localStorage.removeItem('auth-token');
       localStorage.removeItem('user');
+      clearAuthCookie();
       setUser(null);
     }
   }, []);

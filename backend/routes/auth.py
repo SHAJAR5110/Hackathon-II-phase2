@@ -13,7 +13,7 @@ from models import SignupRequest, SigninRequest, AuthResponse, ErrorResponse
 from services.auth_service import AuthService
 
 # Create router for authentication endpoints
-router = APIRouter(prefix="/auth", tags=["Authentication"])
+router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 
 
 @router.post(

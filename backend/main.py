@@ -126,9 +126,11 @@ async def root():
 # Register routes
 from routes.tasks import router as tasks_router
 from routes.auth import router as auth_router
+from routes.users import router as users_router
 
 app.include_router(tasks_router)
 app.include_router(auth_router)
+app.include_router(users_router)
 
 
 # Application Lifecycle Events

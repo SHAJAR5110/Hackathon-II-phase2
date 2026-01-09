@@ -1,7 +1,5 @@
 {
-  "buildCommand": "cd frontend && npm run build",
-  "startCommand": "cd frontend && npm start",
-  "outputDirectory": "frontend/.next",
+  "root": "frontend",
   "framework": "nextjs",
   "regions": ["iad1"],
   "env": {

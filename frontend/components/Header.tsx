@@ -1,55 +1,189 @@
-/**
- * Header Component
- * Phase II - Todo Full-Stack Web Application
- *
- * Navigation header with app logo, user info, and logout button.
- */
-
 'use client';
 
-import { useAuth } from '@/lib/auth';
+import { useState } from 'react';
+import Link from 'next/link';
+import { Menu, X, LogOut, User } from 'lucide-react';
 
-export default function Header() {
-  const { user, logout, isAuthenticated } = useAuth();
+interface HeaderProps {
+  isAuthenticated?: boolean;
+  userName?: string;
+}
+
+export default function Header({ isAuthenticated = false, userName }: HeaderProps) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const toggleProfile = () => setIsProfileOpen(!isProfileOpen);
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+    <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex items-center">
-            <h1 className="text-2xl font-bold text-primary-600">
-              Todo App
-            </h1>
+          <Link href="/" className="flex items-center gap-2 font-bold text-xl text-gray-900 hover:text-blue-600 transition">
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg flex items-center justify-center text-white font-bold">
+              ✓
+            </div>
+            <span className="hidden sm:inline">TaskMaster</span>
+          </Link>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-8">
+            <Link href="/" className="text-gray-700 hover:text-blue-600 font-medium transition">
+              Home
+            </Link>
+            <Link href="/#features" className="text-gray-700 hover:text-blue-600 font-medium transition">
+              Features
+            </Link>
+            <a href="/#about" className="text-gray-700 hover:text-blue-600 font-medium transition">
+              About
+            </a>
           </div>
 
-          {/* User info and logout */}
-          {isAuthenticated && user ? (
-            <div className="flex items-center gap-4">
-              <div className="text-sm">
-                <p className="text-gray-900 font-medium">{user.name}</p>
-                <p className="text-gray-500">{user.email}</p>
+          {/* Right Side Actions */}
+          <div className="hidden md:flex items-center gap-4">
+            {isAuthenticated ? (
+              <div className="relative">
+                <button
+                  onClick={toggleProfile}
+                  className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+                  aria-label="User menu"
+                  aria-expanded={isProfileOpen}
+                  aria-haspopup="true"
+                >
+                  <User className="w-5 h-5" />
+                  <span className="text-sm font-medium">{userName || 'User'}</span>
+                </button>
+
+                {/* Profile Dropdown */}
+                {isProfileOpen && (
+                  <div
+                    className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200"
+                    role="menu"
+                  >
+                    <Link
+                      href="/dashboard"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-t-lg transition"
+                      role="menuitem"
+                    >
+                      Dashboard
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-b-lg transition flex items-center gap-2"
+                      role="menuitem"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Logout
+                    </button>
+                  </div>
+                )}
               </div>
-              <button
-                onClick={logout}
-                className="btn-secondary text-sm"
-                aria-label="Logout"
-              >
-                Logout
-              </button>
-            </div>
-          ) : (
-            <div className="flex items-center gap-4">
-              <a href="/auth/signin" className="text-sm text-gray-700 hover:text-primary-600">
-                Sign In
-              </a>
-              <a href="/auth/signup" className="btn-primary text-sm">
-                Sign Up
-              </a>
-            </div>
-          )}
+            ) : (
+              <>
+                <Link
+                  href="/auth/signin"
+                  className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/auth/signup"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition"
+                >
+                  Sign Up
+                </Link>
+              </>
+            )}
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={toggleMenu}
+            className="md:hidden p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+            aria-label="Toggle navigation menu"
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-menu"
+          >
+            {isMenuOpen ? (
+              <X className="w-6 h-6" />
+            ) : (
+              <Menu className="w-6 h-6" />
+            )}
+          </button>
         </div>
-      </div>
+
+        {/* Mobile Navigation */}
+        {isMenuOpen && (
+          <div id="mobile-menu" className="md:hidden pb-4 border-t border-gray-200">
+            <div className="flex flex-col gap-2 mt-4">
+              <Link
+                href="/"
+                className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition"
+              >
+                Home
+              </Link>
+              <a
+                href="/#features"
+                className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition"
+              >
+                Features
+              </a>
+              <a
+                href="/#about"
+                className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition"
+              >
+                About
+              </a>
+
+              <div className="border-t border-gray-200 my-2 pt-2">
+                {isAuthenticated ? (
+                  <>
+                    <Link
+                      href="/dashboard"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition"
+                    >
+                      Dashboard
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition flex items-center gap-2"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/auth/signin"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition"
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      href="/auth/signup"
+                      className="block px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition"
+                    >
+                      Sign Up
+                    </Link>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </nav>
     </header>
   );
 }

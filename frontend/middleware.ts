@@ -75,6 +75,6 @@ export const config = {
     // - _next (Next.js internals)
     // - api (API routes)
     // - favicon.ico (static file)
-    // '/((?!_next|api|favicon.ico).*)',
+    '/((?!_next|api|favicon.ico).*)',
   ],
 };

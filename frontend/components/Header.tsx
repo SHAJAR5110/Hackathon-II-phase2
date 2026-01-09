@@ -46,9 +46,9 @@ export default function Header() {
             <Link href="/#features" className="text-gray-700 hover:text-blue-600 font-medium transition">
               Features
             </Link>
-            <a href="/#about" className="text-gray-700 hover:text-blue-600 font-medium transition">
+            <Link href="/#about" className="text-gray-700 hover:text-blue-600 font-medium transition">
               About
-            </a>
+            </Link>
           </div>
 
           {/* Right Side Actions */}
@@ -134,18 +134,18 @@ export default function Header() {
               >
                 Home
               </Link>
-              <a
+              <Link
                 href="/#features"
                 className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition"
               >
                 Features
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/#about"
                 className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition"
               >
                 About
-              </a>
+              </Link>
 
               <div className="border-t border-gray-200 my-2 pt-2">
                 {isAuthenticated ? (

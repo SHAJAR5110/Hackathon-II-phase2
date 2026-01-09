@@ -2,6 +2,9 @@
 
 import { createContext, useCallback, useEffect, useState, ReactNode } from 'react';
 
+// Get API base URL from environment or use localhost default
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
 export interface User {
   id: string;
   email: string;
@@ -35,7 +38,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const token = localStorage.getItem('auth-token');
         if (token) {
           // Try to fetch user data to verify token is valid
-          const response = await fetch('http://localhost:8000/api/users/me', {
+          const response = await fetch(`${API_URL}/api/users/me`, {
             headers: {
               'Authorization': `Bearer ${token}`,
             },
@@ -61,7 +64,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const login = useCallback(async (email: string, password: string) => {
     try {
-      const response = await fetch('http://localhost:8000/api/auth/signin', {
+      const response = await fetch(`${API_URL}/api/auth/signin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -95,7 +98,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       const token = localStorage.getItem('auth-token');
       if (token) {
-        await fetch('http://localhost:8000/api/auth/logout', {
+        await fetch(`${API_URL}/api/auth/logout`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -113,7 +116,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const signup = useCallback(async (email: string, password: string, name: string) => {
     try {
-      const response = await fetch('http://localhost:8000/api/auth/signup', {
+      const response = await fetch(`${API_URL}/api/auth/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,27 +1,9 @@
 /**
- * Next.js Middleware
- * Phase II - Todo Full-Stack Web Application
+ * Next.js Middleware - DISABLED
  *
- * Redirects unauthenticated users to signin page.
- * Protects all routes except /auth/* pages.
- * Prevents access to dashboard and main app without authentication.
+ * Middleware disabled due to invocation errors in production.
+ * Authentication will be handled at the page level instead.
  */
 
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  const token = request.cookies.get('auth-token')?.value;
-
-  // Redirect unauthenticated users from root to signin
-  if (pathname === '/' && !token) {
-    return NextResponse.redirect(new URL('/auth/signin', request.url));
-  }
-
-  return NextResponse.next();
-}
-
-export const config = {
-  matcher: ['/', '/((?!api|_next|static|favicon.ico).*)'],
-};
+// Middleware temporarily disabled - causes MIDDLEWARE_INVOCATION_FAILED error on Vercel
+// Authentication protection will be implemented at component/page level instead

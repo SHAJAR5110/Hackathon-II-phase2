@@ -1,44 +1,43 @@
 /**
  * Next.js Middleware - Vercel Edge Compatible
- * Lightweight middleware for token persistence across requests
+ * Protects dashboard route with authentication
  *
- * Authentication is primarily handled client-side:
- * - ProtectedRoute component protects /dashboard
- * - SigninPage redirects authenticated users
- * - SignupPage handles registration flow
+ * CRITICAL: Matcher limited to /dashboard only to avoid:
+ * - Static route conflicts
+ * - Edge Runtime invocation failures
+ * - Double authentication logic
  *
- * This middleware is minimal to avoid conflicts with client-side auth logic.
+ * Client-side auth handles:
+ * - SigninPage/SignupPage redirects
+ * - Public route access
+ * - Auth state management
  */
 
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 /**
- * Middleware function - runs on every request
- * Provides token persistence from cookies to headers
+ * Middleware - Protects /dashboard route
+ * Checks for auth token and redirects to signin if missing
  */
 export function middleware(request: NextRequest) {
-  const response = NextResponse.next();
-
-  // Get auth token from request cookies (set by client after login)
+  // Check for auth token in cookies
   const authToken = request.cookies.get('auth-token')?.value;
 
-  // If token exists, include it in response headers for downstream processing
-  if (authToken) {
-    response.headers.set('x-auth-token', authToken);
+  // If no token, redirect to signin
+  if (!authToken) {
+    return NextResponse.redirect(new URL('/auth/signin', request.url));
   }
 
+  // Token exists, persist in response headers
+  const response = NextResponse.next();
+  response.headers.set('x-auth-token', authToken);
   return response;
 }
 
-// Matcher configuration for Vercel edge
-// Apply middleware to all routes except Next.js internals and static assets
+// Matcher configuration - ONLY for protected dashboard route
+// This prevents Edge Runtime issues with static routes
 export const config = {
-  matcher: [
-    // Apply to all routes except:
-    // - /_next (Next.js internals)
-    // - /api (API routes - backend handles auth)
-    // - /favicon.ico (static file)
-    '/((?!_next|api|favicon.ico).*)',
-  ],
+  
+  matcher: ['/dashboard/:path*'],
 };

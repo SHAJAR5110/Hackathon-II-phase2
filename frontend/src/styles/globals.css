@@ -210,3 +210,7 @@
     @apply bg-gray-800 border-gray-700 text-gray-100;
   }
 }
+
+.modal-open {
+  overflow: hidden;
+}

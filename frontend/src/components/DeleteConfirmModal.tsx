@@ -18,9 +18,9 @@ export default function DeleteConfirmModal({
 }: DeleteConfirmModalProps) {
   // Prevent background scroll when modal is open
   useEffect(() => {
-    document.body.style.overflow = 'hidden';
+    document.body.classList.add('modal-open');
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.classList.remove('modal-open');
     };
   }, []);
 

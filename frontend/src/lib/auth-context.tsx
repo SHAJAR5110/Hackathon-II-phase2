@@ -3,8 +3,7 @@
 import { createContext, useCallback, useEffect, useState, ReactNode } from 'react';
 import { setAuthCookie, clearAuthCookie } from '@/lib/auth-cookies';
 
-// Get API base URL from environment or use localhost default
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_URL = '';
 
 export interface User {
   id: string;

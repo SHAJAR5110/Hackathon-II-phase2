@@ -21,6 +21,15 @@ const nextConfig = {
     ignoreBuildErrors: false,
   },
 
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'https://abbasshajar-todo-backend.hf.space/api/:path*',
+      },
+    ]
+  },
+
   // ESLint strict mode
   eslint: {
     ignoreDuringBuilds: false,

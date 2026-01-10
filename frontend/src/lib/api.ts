@@ -50,7 +50,7 @@ export interface ErrorResponse {
 // API Client Configuration
 // ============================================================================
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE_URL = '';
 
 /**
  * Get JWT token from localStorage or cookies.

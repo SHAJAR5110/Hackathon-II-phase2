@@ -42,19 +42,19 @@
     ],
     "paths": {
       "@/*": [
-        "./*"
+        "./src/*"
       ],
       "@/components/*": [
-        "./components/*"
+        "./src/components/*"
       ],
       "@/lib/*": [
-        "./lib/*"
+        "./src/lib/*"
       ],
       "@/styles/*": [
-        "./styles/*"
+        "./src/styles/*"
       ],
       "@/app/*": [
-        "./app/*"
+        "./src/app/*"
       ]
     },
     "allowJs": true

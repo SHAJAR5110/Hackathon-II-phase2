@@ -2,14 +2,6 @@
 const nextConfig = {
   reactStrictMode: true,
 
-  // Experimental features
-  experimental: {
-    // Enable Server Actions
-    serverActions: {
-      bodySizeLimit: '2mb',
-    },
-  },
-
   // Image configuration (if using Next.js Image component)
   images: {
     domains: [],
@@ -28,11 +20,6 @@ const nextConfig = {
         destination: 'https://abbasshajar-todo-backend.hf.space/api/:path*',
       },
     ]
-  },
-
-  // ESLint strict mode
-  eslint: {
-    ignoreDuringBuilds: false,
   },
 }
 

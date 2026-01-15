@@ -1,109 +1,36 @@
-# Frontend - Todo Full-Stack Web Application
-
-## Overview
-
-Next.js 16+ frontend application with React 19+, TypeScript, and Tailwind CSS.
-
-## Tech Stack
-
-- **Framework**: Next.js 16+ (App Router)
-- **Language**: TypeScript (strict mode)
-- **Styling**: Tailwind CSS 3+
-- **Authentication**: Better Auth (JWT-based)
-- **Icons**: Lucide React
-- **State Management**: React hooks, Context API
-- **HTTP Client**: Native fetch with centralized wrapper
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
 
-### Prerequisites
-
-- Node.js 20+
-- npm or yarn
-
-### Installation
-
-```bash
-npm install
-```
-
-### Environment Variables
-
-Copy `.env.local.example` to `.env.local` and configure:
-
-```
-NEXT_PUBLIC_API_URL=http://localhost:8000
-NEXT_PUBLIC_BETTER_AUTH_SECRET=your-secret-key-here
-```
-
-### Development
+First, run the development server:
 
 ```bash
 npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view the application.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-### Build
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-```bash
-npm run build
-npm run start
-```
-
-## Project Structure
-
-```
-frontend/
-├── app/                      # Next.js App Router pages
-│   ├── layout.tsx           # Root layout
-│   ├── page.tsx             # Dashboard (task list)
-│   ├── auth/
-│   │   ├── signup/
-│   │   │   └── page.tsx    # Signup page
-│   │   └── signin/
-│   │       └── page.tsx    # Signin page
-│   └── middleware.ts        # Auth middleware
-├── components/              # React components
-│   ├── TaskList.tsx
-│   ├── TaskItem.tsx
-│   ├── TaskForm.tsx
-│   ├── Header.tsx
-│   ├── SignupForm.tsx
-│   └── SigninForm.tsx
-├── lib/                     # Utilities
-│   ├── api.ts              # Centralized API client
-│   └── auth.ts             # Better Auth integration
-├── styles/
-│   └── globals.css         # Global styles and Tailwind
-└── CLAUDE.md               # Development guidelines
-```
-
-## Development Guidelines
-
-See `CLAUDE.md` for detailed development patterns and best practices.
-
-## Key Patterns
-
-- Server Components by default; Client Components only for interactivity
-- All API calls through `/lib/api.ts` (centralized)
-- JWT attached automatically via Authorization header
-- Tailwind CSS utilities only (no inline styles)
-- TypeScript strict mode enabled
-
-## Testing
-
-```bash
-npm run test        # Run component tests
-npm run test:e2e    # Run E2E tests (optional)
-```
-
-## Deployment
-
-This application is designed for deployment on Vercel or similar Next.js hosting platforms.
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
 ## Learn More
 
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
-- [Better Auth Documentation](https://better-auth.com/docs)
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

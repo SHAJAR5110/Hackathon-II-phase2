@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(cd:*)",
+      "Bash(npx create-next-app:*)",
+      "Bash(npx create-next-app@latest:*)",
+      "Bash(yes:*)",
+      "Bash(npm install:*)",
+      "mcp__acp__Bash",
+      "mcp__acp__Edit"
+    ]
+  }
+}
